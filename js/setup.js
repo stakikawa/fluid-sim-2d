@@ -1,6 +1,5 @@
 function setup() {
     const canvas = document.getElementById("glcanvas");
-    // Initialize the GL context
     const gl = canvas.getContext("webgl2");
   
     // Only continue if WebGL 2 is available and working
@@ -13,11 +12,10 @@ function setup() {
 
     // Set clear color to black
     renderer.setClearColor(new THREE.Color(0.0, 0.0, 0.0)); 
-
-    const scene = new THREE.Scene();
-
-    const camera = new THREE.OrthographicCamera(- 1, 1, 1, - 1, 0, 1 );
-    scene.add(camera);
+    let width = window.innerWidth;
+    let height = window.innerHeight;
+    const camera = new THREE.OrthographicCamera(width / - 2, width / 2, height / 2, height / - 2, 1, 1000 );
+    camera.position.z = 2;
 
     // On window resize update camera
     function resize() {
@@ -29,7 +27,6 @@ function setup() {
 
     return {
         renderer,
-        scene,
         camera
     };
 }
