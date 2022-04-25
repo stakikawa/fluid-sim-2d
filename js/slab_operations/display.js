@@ -19,5 +19,8 @@ class DisplayStep {
         if (values.density !== undefined) {
             this.material.uniforms.density.value = values.density;
         }
+        if (values.ink !== undefined) {
+            this.material.uniforms.color.value = values.ink;
+        }
     }
 }

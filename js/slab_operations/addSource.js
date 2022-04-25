@@ -24,5 +24,8 @@ class AddSourceStep {
         if (values.point !== undefined) {
             this.material.uniforms.point.value = values.point;
         }
+        if (values.radius !== undefined) {
+            this.material.uniforms.radius.value = values.radius;
+        }
     }
 }

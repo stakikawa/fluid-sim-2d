@@ -27,5 +27,8 @@ class AdvectDensityStep {
         if (values.dissipation !== undefined) {
             this.material.uniforms.dissipation.value = values.dissipation;
         }
+        if (values.timeStep !== undefined) {
+            this.material.uniforms.timeStep.value = values.timeStep;
+        }
     }
 }

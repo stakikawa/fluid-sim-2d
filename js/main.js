@@ -9,11 +9,37 @@ const width = window.innerWidth;
 const height = window.innerHeight;
 const gridSize = new THREE.Vector2(width, height);
 const source = new THREE.Vector2(1.0, 0.0);
-const ink = new THREE.Vector3(0.05, 0.05, 0.05);
-const radius = 0.3;
-const jacobiIterations = 30;
-const dissipation = 0.998;
+
+// variables
+var ink = new THREE.Vector3(0.05, 0.05, 0.05);
+var radius = 0.3;
+var jacobiIterations = 30;
+var dissipation = 0.998;
 var timeStep = 0.1;
+
+// setup input variables
+var input = {
+  InputColor_R: ink.x * 10 * 255,
+  InputColor_G: ink.y * 10 * 255,
+  InputColor_B: ink.z * 10 * 255,
+  InputRadius: radius,
+  JacobiIterations: jacobiIterations,
+  Dissipation: 0.2,
+  Timestep: timeStep
+}
+
+// setup gui
+var gui = new dat.GUI();
+window.onload = function() {
+  gui.addFolder("Click and Drag to start Demo");
+  gui.add(input, 'Timestep', 0.01, 0.15);
+  gui.add(input, 'JacobiIterations', 1, 80);
+  gui.add(input, 'Dissipation', 0.0, 1.0);
+  gui.add(input, 'InputRadius', 0.05, 0.5);
+  gui.add(input, 'InputColor_R', 0, 255);
+  gui.add(input, 'InputColor_G', 0, 255);
+  gui.add(input, 'InputColor_B', 0, 255);
+}
 
 // render target settings
 const options = {
@@ -63,6 +89,16 @@ const pressureGradientStep = new PressureGradientStep(gridSize);
 const advectDensityStep = new AdvectDensityStep(gridSize, timeStep);
 const displayStep = new DisplayStep(gridSize, ink);
 
+function updateInputs() {
+  ink.set(input.InputColor_R, input.InputColor_G, input.InputColor_B);
+  ink.divideScalar(2550.0);
+
+  radius = input.InputRadius;
+  jacobiIterations = input.JacobiIterations;
+  dissipation = 1.0 - (0.01 * input.Dissipation);
+  timeStep = input.Timestep;
+}
+
 // initialize color and velocity
 function initialize() {
 
@@ -78,10 +114,14 @@ function initialize() {
 // update loop
 function update() {
 
+  // update inputs
+  updateInputs();
+
   // advect velocity
   advectVelocityStep.update({
     velocity: velocity.read.texture,
-    advected: velocity.read.texture
+    advected: velocity.read.texture,
+    timeStep: timeStep
   });
   renderer.setRenderTarget(velocity.write);
   renderer.render(advectVelocityStep.scene, camera);
@@ -100,7 +140,8 @@ function update() {
     addForceStep.update({
         velocity: velocity.read.texture,
         point: point,
-        force: force
+        force: force,
+        radius: radius
     });
     renderer.setRenderTarget(velocity.write);
     renderer.render(addForceStep.scene, camera);
@@ -113,7 +154,8 @@ function update() {
     point.set(mouse.position.x, mouse.position.y);
     addSourceStep.update({
       density: density.read.texture,
-      point: point
+      point: point,
+      radius: radius
     });
     renderer.setRenderTarget(density.write);
     renderer.render(addSourceStep.scene, camera);
@@ -166,7 +208,8 @@ function update() {
   
   // display density
   displayStep.update({
-    density: density.read.texture
+    density: density.read.texture,
+    ink: ink
   });
   renderer.setRenderTarget(null);
   renderer.render(displayStep.scene, camera);

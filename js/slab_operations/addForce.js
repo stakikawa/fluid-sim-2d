@@ -27,5 +27,8 @@ class AddForceStep {
         if (values.force !== undefined) {
             this.material.uniforms.force.value = values.force;
         }
+        if (values.radius !== undefined) {
+            this.material.uniforms.radius.value = values.radius;
+        }
     }
 }
