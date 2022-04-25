@@ -13,7 +13,7 @@ const source = new THREE.Vector2(1.0, 0.0);
 // variables
 var ink = new THREE.Vector3(0.05, 0.05, 0.05);
 var radius = 0.3;
-var jacobiIterations = 30;
+var jacobiIterations = 60;
 var dissipation = 0.998;
 var timeStep = 0.1;
 
